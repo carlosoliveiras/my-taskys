@@ -1,41 +1,68 @@
 @AGENTS.md
 
-## Supabase Google OAuth Setup
+## Fluxo Git e GitHub
 
-### Fluxo de Configuração
+### Regras de Commit
 
-1. **Autenticar com Supabase MCP**
-   - CLI: `/mcp` → select "claude.ai Supabase"
-   - Conecta com sua conta Supabase
+**Todos os commits devem ser em Português Brasileiro**
 
-2. **Obter URLs e Chaves do Projeto**
-   - Use `mcp__claude_ai_Supabase__get_project_url` → retorna `https://{project-id}.supabase.co`
-   - Use `mcp__claude_ai_Supabase__get_publishable_keys` → retorna anon key + service_role key
+Formato: `tipo(escopo): descrição em PT-BR`
 
-3. **Configurar Variáveis de Ambiente (.env)**
+Tipos:
+- `feat:` nova funcionalidade
+- `fix:` correção de bug
+- `docs:` documentação
+- `refactor:` refatoração (sem mudança de comportamento)
+- `test:` testes
+- `chore:` tarefas (deps, build, etc)
+
+Exemplos:
+```
+feat: implementar tela de login com Google OAuth
+fix: corrigir erro 404 na API de tarefas
+docs: adicionar guia de configuração Supabase
+```
+
+### Workflow Git
+
+1. **Editar código**
+   ```bash
+   # Verificar status
+   git status
    ```
-   NEXT_PUBLIC_SUPABASE_URL=https://{project-id}.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_...
-   SUPABASE_SERVICE_ROLE_KEY=eyJh...
-   GOOGLE_CLIENT_ID=226695038952-lj2ci34kg0cl1hpprhbv0254ms58n0al.apps.googleusercontent.com
-   GOOGLE_CLIENT_SECRET=GOCSPX-...
+
+2. **Revisar mudanças**
+   ```bash
+   git diff
    ```
 
-4. **Habilitar Google Provider no Supabase**
-   - Dashboard Supabase → Auth → Providers → Google
-   - Enable toggle (ON)
-   - Colar `GOOGLE_CLIENT_ID` + `GOOGLE_CLIENT_SECRET`
-   - Callback URL auto: `https://{project-id}.supabase.co/auth/v1/callback`
-   - Save
+3. **Staging**
+   ```bash
+   # Arquivos específicos
+   git add arquivo1.ts arquivo2.tsx
+   
+   # Ou tudo (cuidado com .env!)
+   git add .
+   ```
 
-5. **Fluxo de Login (já implementado)**
-   - `components/TaskApp.tsx:223` → `handleGoogleLogin()`
-   - Chama `supabase.auth.signInWithOAuth({ provider: 'google', ... })`
-   - Redireciona para Google → volta em `/auth/callback`
-   - Route `app/auth/callback/route.ts:5` → troca code por session Supabase
-   - Salva Google tokens em `user_tokens` table
+4. **Commit em PT-BR**
+   ```bash
+   git commit -m "feat: descrição clara em português"
+   ```
 
-6. **Troubleshooting**
-   - Erro "provider is not enabled" → Google provider não habilitado no Supabase
-   - Erro "Unsupported provider" → Verificar se Google está marcado como ativo
-   - Callback URL mismatch → Usar URL exata do projeto Supabase
+5. **Push para GitHub**
+   ```bash
+   git push origin main
+   ```
+
+6. **Vercel Deploy** (automático)
+   - Cada push em `main` dispara build + deploy no Vercel
+   - Verificar status em vercel.com dashboard
+
+### Boas Práticas
+
+- Commits frequentes, pequenos e focused
+- Mensagens descritivas (não "update", "fix stuff")
+- Nunca commitar `.env` (gitignored)
+- Revisar `git diff` antes de `git add` para evitar surpresas
+- Pull antes de push se trabalhar em paralelo
