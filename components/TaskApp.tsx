@@ -1173,7 +1173,6 @@ function TaskItem({
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
 
   const isCompleted = task.status === "completed";
-
   const completedSubtasks = subtasks.filter((st) => st.status === "completed");
 
   const formattedDueDate = task.due
@@ -1195,70 +1194,68 @@ function TaskItem({
 
   return (
     <div
-      className={`group rounded-xl border border-zinc-200/50 bg-white shadow-sm transition-all hover:shadow-md dark:border-zinc-800/60 dark:bg-zinc-900/60 ${
+      className={`group rounded-2xl border border-zinc-200/50 bg-white shadow-sm transition-all hover:shadow-md dark:border-zinc-800/60 dark:bg-zinc-900/60 ${
         isSelected ? "ring-1 ring-blue-500/80 border-transparent" : ""
       }`}
     >
       <div
         onClick={onSelect}
-        className="flex cursor-pointer items-start justify-between gap-4 p-4.5"
+        className="flex cursor-pointer items-center justify-between gap-6 p-5"
       >
-        <div className="flex flex-1 items-start gap-3 truncate">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggle();
-            }}
-            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition-all ${
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle();
+          }}
+          className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full font-bold text-lg transition-all shadow-md ${
+            isCompleted
+              ? "bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-emerald-500/20"
+              : "border-2 border-zinc-200 bg-white text-zinc-600 hover:border-blue-500 hover:text-blue-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:border-blue-500 dark:hover:text-blue-400"
+          }`}
+        >
+          {isCompleted ? <Check size={24} className="stroke-[2.5]" /> : "+1"}
+        </button>
+
+        <div className="flex-1 min-w-0">
+          <span
+            className={`block text-sm font-semibold transition-all ${
               isCompleted
-                ? "bg-blue-600 border-blue-600 text-white"
-                : "border-zinc-300 hover:border-blue-500 dark:border-zinc-700"
+                ? "text-zinc-400 line-through dark:text-zinc-500"
+                : "text-zinc-900 dark:text-zinc-50"
             }`}
           >
-            {isCompleted && <Check size={12} className="stroke-[3]" />}
-          </button>
+            {task.title}
+          </span>
 
-          <div className="flex-1 truncate">
-            <span
-              className={`text-sm font-semibold transition-all ${
-                isCompleted
-                  ? "text-zinc-400 line-through dark:text-zinc-500"
-                  : "text-zinc-900 dark:text-zinc-50"
-              }`}
-            >
-              {task.title}
-            </span>
+          {task.notes && (
+            <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1">
+              {task.notes}
+            </p>
+          )}
 
-            {task.notes && (
-              <p className="mt-1 text-xs text-zinc-505 dark:text-zinc-400 line-clamp-1">
-                {task.notes}
-              </p>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {formattedDueDate && (
+              <div
+                className={`flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-semibold tracking-wide ${
+                  isCompleted
+                    ? "bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500"
+                    : new Date(task.due!).getTime() < Date.now() - 86400000
+                    ? "bg-red-50 text-red-650 dark:bg-red-950/20 dark:text-red-400"
+                    : "bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400"
+                }`}
+              >
+                <Calendar size={10} />
+                <span>{formattedDueDate}</span>
+              </div>
             )}
 
-            <div className="mt-2.5 flex flex-wrap items-center gap-2">
-              {formattedDueDate && (
-                <div
-                  className={`flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold tracking-wide ${
-                    isCompleted
-                      ? "bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-500"
-                      : new Date(task.due!).getTime() < Date.now() - 86400000
-                      ? "bg-red-50 text-red-650 dark:bg-red-950/20 dark:text-red-400"
-                      : "bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400"
-                  }`}
-                >
-                  <Calendar size={10} />
-                  <span>{formattedDueDate}</span>
-                </div>
-              )}
-
-              {subtasks.length > 0 && (
-                <div className="flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold text-zinc-650 dark:bg-zinc-800 dark:text-zinc-400">
-                  <span>
-                    {completedSubtasks.length}/{subtasks.length} Subtarefas
-                  </span>
-                </div>
-              )}
-            </div>
+            {subtasks.length > 0 && (
+              <div className="flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-1 text-[10px] font-semibold text-zinc-650 dark:bg-zinc-800 dark:text-zinc-400">
+                <span>
+                  {completedSubtasks.length}/{subtasks.length}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
